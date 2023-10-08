@@ -52,4 +52,9 @@ Start the server:
   * "sequelize": "^6.33.0",
   * "swagger-jsdoc": "^6.2.8",
   * "swagger-ui-express": "^5.0.0"
+  * "tslint": "^6.1.3",
+  * "typescript": "^5.2.2"
+  * "nodemon": ^2.0.22
+  * "tsc-watch": ^6.0.4
+
     
