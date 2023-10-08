@@ -1,0 +1,1 @@
+{"version":3,"file":"movieActor.js","sourceRoot":"","sources":["../../../../src/models/intermediateTable/movieActor.ts"],"names":[],"mappings":";;;;;;AAAA,yCAAqC;AACrC,qEAA6C;AAIhC,QAAA,UAAU,GAAG,oBAAS,CAAC,MAAM,CACtC,YAAY,EACZ;IACE,EAAE,EAAE;QACF,IAAI,EAAE,qBAAS,CAAC,OAAO;QACvB,UAAU,EAAE,IAAI;QAChB,aAAa,EAAE,IAAI;KACpB;CACF,EACD;IACE,UAAU,EAAE,KAAK;CAClB,CACF,CAAA"}

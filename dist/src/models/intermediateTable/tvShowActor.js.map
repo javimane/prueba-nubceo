@@ -1,0 +1,1 @@
+{"version":3,"file":"tvShowActor.js","sourceRoot":"","sources":["../../../../src/models/intermediateTable/tvShowActor.ts"],"names":[],"mappings":";;;;;;AAAA,yCAAqC;AACrC,qEAA6C;AAKhC,QAAA,WAAW,GAAG,oBAAS,CAAC,MAAM,CACvC,aAAa,EACb;IACE,EAAE,EAAE;QACF,IAAI,EAAE,qBAAS,CAAC,OAAO;QACvB,UAAU,EAAE,IAAI;QAChB,aAAa,EAAE,IAAI;KACpB;CACF,EACD;IACE,UAAU,EAAE,KAAK;CAClB,CACF,CAAA"}
