@@ -30,11 +30,13 @@ SECRET_KEY=         //your example secret key or token
  ```
 const db = new Sequelize('prueba_nubceo', 'your user', 'your password',
 ```
+6. Download the file ```prueba_tecnica.sql ```and run it in your Mysql program.
+   
 Start the server:
 ```
  npm start
 ```
- 6. Access the aplication at http://localhost:3001/api-doc/ to see and try the endpoints, and see the models.
+7. Access the aplication at http://localhost:3001/api-doc/ to see and try the endpoints, and see the models.
 
 ## Project Information
  * Name: prueba_nubceo
