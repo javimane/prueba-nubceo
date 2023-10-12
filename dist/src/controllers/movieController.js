@@ -8,39 +8,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.searchMoviesByTitle = exports.getMovie = exports.getAllMovies = void 0;
-const movie_1 = require("../models/movie");
-const sequelize_1 = require("sequelize");
-const actor_1 = require("../models/actor");
 require("../models/intermediateTable/movieActor");
-const director_1 = require("../models/director");
+const movieRepository_1 = __importDefault(require("../repositories/movieRepository"));
 //GET /api/movies
 const getAllMovies = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // Try to find all movies.
     try {
-        const listMovies = yield movie_1.Movie.findAll({
-            attributes: ['id', 'title', 'date', 'gender'],
-            include: [
-                {
-                    model: director_1.Director,
-                    attributes: ['name'],
-                },
-                {
-                    model: actor_1.Actor,
-                    attributes: ['name'],
-                    through: {
-                        attributes: [],
-                    },
-                },
-            ],
-        });
+        const listMovies = yield movieRepository_1.default.getAllMovies();
         // Return all movies.
         res.json(listMovies);
     }
     catch (error) {
         // Throw an error if something goes wrong.
-        throw new Error('Error retrieving all Movies');
+        res.status(500).json({ message: error.message });
     }
 });
 exports.getAllMovies = getAllMovies;
@@ -49,64 +34,26 @@ const getMovie = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //Try to find the specific Movie by Id
     try {
         const { id } = req.params;
-        const movie = yield movie_1.Movie.findByPk(id, {
-            include: [{
-                    model: director_1.Director,
-                    attributes: ['name']
-                },
-                {
-                    model: actor_1.Actor,
-                    attributes: ['name'],
-                    through: {
-                        attributes: [],
-                    },
-                }
-            ]
-        });
+        const movie = yield movieRepository_1.default.getMovie(id);
         //Return the movie
         res.json(movie);
     }
     catch (error) {
         // Throw an error if something goes wrong.
-        throw new Error('Error retrieving Movie');
+        res.status(500).json({ message: error.message });
     }
 });
 exports.getMovie = getMovie;
 //POST /api/movies/
 const searchMoviesByTitle = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { title, order } = req.query;
-    // Create a where clause to filter the results by movie title.
-    const whereClause = {
-        title: { [sequelize_1.Op.like]: `%${title}%` }
-    };
-    // Determine the order in which to return the results.
-    const orderItems = order === '1' ? [['title']] : order === '-1' ? [['title', 'DESC']] : [];
-    // Try to find all movies that match the search criteria.
+    const title = req.query.title;
+    const order = req.query.order;
     try {
-        const movies = yield movie_1.Movie.findAll({
-            where: whereClause,
-            attributes: ['id', 'title', 'date', 'gender'],
-            include: [
-                {
-                    model: director_1.Director,
-                    attributes: ['name'],
-                },
-                {
-                    model: actor_1.Actor,
-                    attributes: ['name'],
-                    through: {
-                        attributes: [],
-                    },
-                },
-            ],
-            order: orderItems.map((item) => item),
-        });
-        // Return the matching movies.
+        const movies = yield movieRepository_1.default.searchMoviesByTitle(title, order);
         return res.json(movies);
     }
     catch (error) {
-        // Throw an error if something goes wrong.
-        throw new Error('Error searching movies');
+        res.status(500).json({ message: error.message });
     }
 });
 exports.searchMoviesByTitle = searchMoviesByTitle;

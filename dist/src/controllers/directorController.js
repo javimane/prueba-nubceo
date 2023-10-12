@@ -8,24 +8,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createDirector = void 0;
-const director_1 = require("../models/director");
+const directorRepository_1 = __importDefault(require("../repositories/directorRepository"));
 //POST /api/directors/
 const createDirector = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name, age, gender } = req.body;
-        // Created the director
-        const newDirector = yield director_1.Director.create({
-            name,
-            age,
-            gender,
-        });
+        // Call the repository function to create the director
+        const newDirector = yield directorRepository_1.default.createDirector(name, age, gender);
         // We respond with the film created
         res.json(newDirector);
     }
     catch (error) {
-        throw new Error('Error creating Director');
+        res.status(500).json({ message: error.message });
     }
 });
 exports.createDirector = createDirector;

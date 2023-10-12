@@ -9,69 +9,82 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const actor_1 = require("../models/actor");
+const director_1 = require("../models/director");
+const episode_1 = require("../models/episode");
 const tvshow_1 = require("../models/tvshow");
-class TVShowRepository {
-    getAllTVShows() {
+class TvShowRepository {
+    getTvShow(id) {
         return __awaiter(this, void 0, void 0, function* () {
+            //Try to find one TvShow
+            try {
+                const tvShow = yield tvshow_1.TvShow.findByPk(id, {
+                    include: [{
+                            model: episode_1.Episode,
+                            attributes: ['name', 'date', 'seasonId']
+                        },
+                    ]
+                });
+                // Return the episode to the client.
+                return tvShow;
+            }
+            catch (error) {
+                // Throw an error if something goes wrong.
+                throw new Error('Error returning TvShow');
+            }
+        });
+    }
+    //GET "/tvshows"
+    getAllTvShow() {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Try to find all TvShows.
             try {
                 const tvShows = yield tvshow_1.TvShow.findAll();
+                // Return all episodes to the client.
                 return tvShows;
             }
             catch (error) {
-                console.log(error.message);
-                throw new Error('Error retrieving TV shows');
+                // Throw an error if something goes wrong.
+                throw new Error('Error returning  all TvShows');
             }
         });
     }
-    getTVShowById(id) {
+    // Get "/tvshows/:tvShowId/episodes/:episodeId"
+    getTvShowEpisode(tvShowId, episodeId) {
         return __awaiter(this, void 0, void 0, function* () {
+            // Try to find the episode with the specified ID.
             try {
-                const tvShow = yield tvshow_1.TvShow.findByPk(id);
-                return tvShow;
-            }
-            catch (error) {
-                throw new Error('Error retrieving TV show');
-            }
-        });
-    }
-    getEpisodebyId(tvShowId, episodeId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const tvShow = yield this.getTVShowById(tvShowId);
-                const episode = tvShow.episodes.find(e => e.episodeId === episodeId);
+                const episode = yield episode_1.Episode.findOne({
+                    where: {
+                        id: episodeId,
+                        tvShowId: tvShowId,
+                    },
+                    attributes: ['id', 'name', 'date', 'seasonId'],
+                    include: [{
+                            model: director_1.Director,
+                            attributes: ['name'],
+                            through: {
+                                attributes: [],
+                            },
+                        },
+                        {
+                            model: actor_1.Actor,
+                            attributes: ['name'],
+                            through: {
+                                attributes: [],
+                            },
+                        }
+                    ]
+                });
+                // Return the episode to the client.
                 return episode;
             }
             catch (error) {
-                throw new Error('Error retrieving Episodes');
-            }
-        });
-    }
-    getAllEpisodes(tvShowId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const tvShow = yield this.getTVShowById(tvShowId);
-                return tvShow.episodes;
-            }
-            catch (error) {
-                throw new Error('Error retrieving Episodes');
-            }
-        });
-    }
-    createTVShow({ title, genre, seasons, plot, episodes, actors }) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                // Create a new TV show object
-                const newTvShow = new TVShow({
-                    title, genre, seasons, plot, episodes, actors
-                });
-                const tvShow = yield TVShow.create(newTvShow);
-                return tvShow;
-            }
-            catch (error) {
-                throw new Error('Error creating TV show');
+                // Throw an error if something goes wrong.
+                throw new Error('Error returning episode');
             }
         });
     }
 }
-exports.default = new TVShowRepository();
+exports.default = new TvShowRepository();
 //# sourceMappingURL=tvShowRepository.js.map

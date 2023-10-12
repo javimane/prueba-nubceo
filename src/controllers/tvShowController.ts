@@ -1,9 +1,5 @@
 import { Request, Response } from 'express';
-import { TvShow } from '../models/tvshow';
-import { Episode } from '../models/episode';
-import { Season } from '../models/season';
-import { Actor } from '../models/actor';
-import { Director } from '../models/director';
+import tvShowRepository from '../repositories/tvShowRepository';
 
 
 
@@ -14,32 +10,24 @@ export const  getTvShow = async(req: Request, res: Response) =>{
   //Try to find one TvShow
   try {
     const { id } = req.params
-    const tvShow = await TvShow.findByPk(id,{
-      
-        include: [{
-            model : Episode,
-            attributes: ['name', 'date', 'seasonId']
-        },
-        ]
-    }
-      )
+    const tvShow = await tvShowRepository.getTvShow(id);
       // Return the episode to the client.
     res.json(tvShow)
-  } catch (error) {
+  } catch (error: any) {
     // Throw an error if something goes wrong.
-    throw new Error('Error returning TvShow');
+    res.status(500).json({ message: error.message });
   }
 }
 //GET "/tvshows"
 export const  getAllTvShow = async(req: Request, res: Response) =>{
   // Try to find all TvShows.
   try {
-    const tvShows = await TvShow.findAll()
+    const tvShows = await tvShowRepository.getAllTvShow()
     // Return all episodes to the client.
     res.json(tvShows)
-  } catch (error) {
+  } catch (error: any) {
     // Throw an error if something goes wrong.
-    throw new Error('Error returning  all TvShows');
+    res.status(500).json({ message: error.message });
   }
 }
 
@@ -48,33 +36,11 @@ export const getTvShowEpisode = async (req: Request, res: Response) => {
   // Try to find the episode with the specified ID.
   try {
     const { tvShowId, episodeId } = req.params;
-    const episode = await Episode.findOne({
-      
-      where: {
-        id: episodeId,
-        tvShowId: tvShowId,
-      },
-      attributes: [ 'id', 'name', 'date', 'seasonId'],
-      include: [{
-        model : Director,
-        attributes: ['name'],
-        through: {
-          attributes: [],
-         },
-        },
-        {
-        model: Actor,
-        attributes: ['name'],
-        through: {
-         attributes: [],
-        },
-        }
-      ]
-    });
+    const episode = await tvShowRepository.getTvShowEpisode( tvShowId, episodeId);
     // Return the episode to the client.
     res.json(episode);
-  } catch (error) {
+  } catch (error: any) {
     // Throw an error if something goes wrong.
-    throw new Error('Error returning episode');
+    res.status(500).json({ message: error.message });
   }
 }

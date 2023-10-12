@@ -8,30 +8,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getTvShowEpisode = exports.getAllTvShow = exports.getTvShow = void 0;
-const tvshow_1 = require("../models/tvshow");
-const episode_1 = require("../models/episode");
-const actor_1 = require("../models/actor");
-const director_1 = require("../models/director");
+const tvShowRepository_1 = __importDefault(require("../repositories/tvShowRepository"));
 // GET /tvshow/:id
 const getTvShow = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //Try to find one TvShow
     try {
         const { id } = req.params;
-        const tvShow = yield tvshow_1.TvShow.findByPk(id, {
-            include: [{
-                    model: episode_1.Episode,
-                    attributes: ['name', 'date', 'seasonId']
-                },
-            ]
-        });
+        const tvShow = yield tvShowRepository_1.default.getTvShow(id);
         // Return the episode to the client.
         res.json(tvShow);
     }
     catch (error) {
         // Throw an error if something goes wrong.
-        throw new Error('Error returning TvShow');
+        res.status(500).json({ message: error.message });
     }
 });
 exports.getTvShow = getTvShow;
@@ -39,13 +33,13 @@ exports.getTvShow = getTvShow;
 const getAllTvShow = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // Try to find all TvShows.
     try {
-        const tvShows = yield tvshow_1.TvShow.findAll();
+        const tvShows = yield tvShowRepository_1.default.getAllTvShow();
         // Return all episodes to the client.
         res.json(tvShows);
     }
     catch (error) {
         // Throw an error if something goes wrong.
-        throw new Error('Error returning  all TvShows');
+        res.status(500).json({ message: error.message });
     }
 });
 exports.getAllTvShow = getAllTvShow;
@@ -54,34 +48,13 @@ const getTvShowEpisode = (req, res) => __awaiter(void 0, void 0, void 0, functio
     // Try to find the episode with the specified ID.
     try {
         const { tvShowId, episodeId } = req.params;
-        const episode = yield episode_1.Episode.findOne({
-            where: {
-                id: episodeId,
-                tvShowId: tvShowId,
-            },
-            attributes: ['id', 'name', 'date', 'seasonId'],
-            include: [{
-                    model: director_1.Director,
-                    attributes: ['name'],
-                    through: {
-                        attributes: [],
-                    },
-                },
-                {
-                    model: actor_1.Actor,
-                    attributes: ['name'],
-                    through: {
-                        attributes: [],
-                    },
-                }
-            ]
-        });
+        const episode = yield tvShowRepository_1.default.getTvShowEpisode(tvShowId, episodeId);
         // Return the episode to the client.
         res.json(episode);
     }
     catch (error) {
         // Throw an error if something goes wrong.
-        throw new Error('Error returning episode');
+        res.status(500).json({ message: error.message });
     }
 });
 exports.getTvShowEpisode = getTvShowEpisode;
